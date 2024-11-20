@@ -3,17 +3,14 @@ run:
 	clear
 	go run main.go
 
-proto-gen:
-	protoc --go_out=./ --go-grpc_out=./ submodule/protos/auth_service/*.proto
-
 migrate_up:
-	migrate -path migrations -database postgres://postgres:postgres@localhost:5432/project_control?sslmode=disable -verbose up
+	migrate -path migrations -database postgres://postgres:postgres@localhost:5432/chat?sslmode=disable -verbose up
 
 migrate_down:
-	migrate -path migrations -database postgres://postgres:postgres@localhost:5432/project_control?sslmode=disable -verbose down
+	migrate -path migrations -database postgres://postgres:postgres@localhost:5432/chat?sslmode=disable -verbose down
 
 migrate_force:
-	migrate -path migrations -database postgres://postgres:postgres@localhost:5432/project_control?sslmode=disable -verbose force 1
+	migrate -path migrations -database postgres://postgres:postgres@localhost:5432/chat?sslmode=disable -verbose force 1
 
 migrate_file:
 	migrate create -ext sql -dir migrations -seq create_table
