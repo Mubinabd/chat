@@ -59,9 +59,9 @@ type RefToken struct {
 }
 
 type ListUserReq struct {
-    Username  string  `json:"username"`
-    FullName  string  `json:"full_name"`
-    Filter    Filter  `json:"filter"`
+    Username string         `json:"username"`
+    FullName string         `json:"full_name"`
+    Filter   *Filter `json:"filter"` 
 }
 
 type ListUserRes struct {

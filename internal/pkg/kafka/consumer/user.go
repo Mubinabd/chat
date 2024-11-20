@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/Mubinabd/project_control/internal/usecase/service"
-	pb "github.com/Mubinabd/project_control/pkg/genproto/auth"
+	"github.com/Mubinabd/chat/internal/service"
+	pb "github.com/Mubinabd/chat/internal/entity"
 	"golang.org/x/exp/slog"
 )
 

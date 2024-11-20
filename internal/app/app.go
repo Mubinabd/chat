@@ -3,20 +3,20 @@ package app
 import (
 	"context"
 
-	a "github.com/Mubinabd/project_control/api"
-	"github.com/Mubinabd/project_control/api/handlers"
-	"github.com/Mubinabd/project_control/internal/repository/postgresql"
-	s "github.com/Mubinabd/project_control/internal/usecase/service"
-	"github.com/Mubinabd/project_control/pkg/config"
-	kafka "github.com/Mubinabd/project_control/pkg/kafka/consumer"
-	prd "github.com/Mubinabd/project_control/pkg/kafka/producer"
+	a "github.com/Mubinabd/chat/internal/delivery"
+	handler "github.com/Mubinabd/chat/internal/delivery/http"
+	db "github.com/Mubinabd/chat/internal/infrastructure"
+	"github.com/Mubinabd/chat/internal/pkg/config"
+	kafka "github.com/Mubinabd/chat/internal/pkg/kafka/consumer"
+	prd "github.com/Mubinabd/chat/internal/pkg/kafka/producer"
+	s "github.com/Mubinabd/chat/internal/service"
 	"github.com/go-redis/redis/v8"
 	"golang.org/x/exp/slog"
 )
 
 func Run(cfg *config.Config) {
 	// Postgres Connection
-	db, err := postgresql.New(cfg)
+	db, err := db.New(cfg)
 	if err != nil {
 		slog.Error("can't connect to db: %v", err)
 		return
@@ -37,8 +37,6 @@ func Run(cfg *config.Config) {
 
 	authService := s.NewAuthService(db)
 	userService := s.NewUserService(db)
-	groupService := s.NewGroupService(db)
-	privateService := s.NewPrivateService(db)
 
 	// Kafka
 	brokers := []string{"kafka_auth:9092"}
@@ -52,7 +50,7 @@ func Run(cfg *config.Config) {
 	Reader(brokers, cm, authService, userService)
 
 	// HTTP Server
-	h := handlers.NewHandler(groupService, privateService, authService, userService, rdb, &pr)
+	h := handler.NewHandler(authService, userService, rdb, &pr)
 
 	router := a.NewGin(h)
 	router.SetTrustedProxies(nil)
