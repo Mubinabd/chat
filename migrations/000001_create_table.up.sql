@@ -36,9 +36,12 @@ CREATE TABLE tokens (
 
 -- Groups table
 CREATE TABLE groups (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id UUID PRIMARY KEY,
+    name TEXT NOT NULL,
+    members JSONB, 
+    messages JSONB,
+    files TEXT,
+    created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP,
     deleted_at BIGINT DEFAULT 0
 );
@@ -47,7 +50,10 @@ CREATE TABLE groups (
 CREATE TABLE group_members (
     group_id UUID REFERENCES groups(id) ON DELETE CASCADE,
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    PRIMARY KEY (group_id, user_id)
+    PRIMARY KEY (group_id, user_id),
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP,
+    deleted_at BIGINT DEFAULT 0
 );
 
 -- Messages table

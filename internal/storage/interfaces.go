@@ -1,4 +1,4 @@
-package usecase
+package repository
 
 import (
 	pb "github.com/Mubinabd/chat/internal/entity"
@@ -7,6 +7,9 @@ import (
 type StorageI interface {
 	Auth() AuthI
 	User() UserI
+	File() FileI
+	Group() GroupI
+	Message() MessageI
 }
 
 type AuthI interface {
@@ -25,4 +28,25 @@ type UserI interface {
 	GetSetting(*pb.GetById) (*pb.Setting, error)
 	EditSetting(*pb.SettingReq) (*pb.Void, error)
 	DeleteUser(*pb.GetById) (*pb.Void, error)
+}
+
+type FileI interface {
+    SaveFile(*pb.SaveFile) (*pb.File, error)
+}
+
+type GroupI interface {
+    CreateGroup(*pb.CreateGroupReq) (*pb.Void, error)
+    GetAllGroups(*pb.ListGroupsReq) (*pb.ListGroupsRes, error)
+	DeleteGroup(*pb.DeleteGroupReq) (*pb.Void, error)
+	UpdateGroup(*pb.UpdateGroupReq) (*pb.Void, error)
+    GetGroupByID(*pb.GetGroupByIDReq) (*pb.Group, error)
+    AddMemberToGroup(*pb.AddFileToGroupReq) (*pb.Void,error)
+}
+type MessageI interface {
+	AddMessageToGroup(*pb.MessageReq) (*pb.Void,error)
+}
+
+type WebSocketHandler struct {
+    FileUC  FileI
+    GroupUC GroupI
 }

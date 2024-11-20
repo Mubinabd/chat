@@ -132,7 +132,7 @@ func (r *AuthRepo) GetAllUsers(req *pb.ListUserReq) (*pb.ListUserRes, error) {
 			FROM 
 				users 
 			WHERE 
-				deleted_at=0 AND role = 'developer'`
+				deleted_at=0 AND role = 'user'`
 
 	var args []interface{}
 

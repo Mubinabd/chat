@@ -1,12 +1,12 @@
 package app
 
 import (
-	"github.com/Mubinabd/chat/internal/service"
+	"github.com/Mubinabd/chat/internal/usecase"
 	kafka "github.com/Mubinabd/chat/internal/pkg/kafka/consumer"
 	"golang.org/x/exp/slog"
 )
 
-func Reader(brokers []string, kcm *kafka.KafkaConsumerManager, authService *service.AuthService, userService *service.UserService) {
+func Reader(brokers []string, kcm *kafka.KafkaConsumerManager, authService *usecase.AuthUseCase, userService *usecase.UserUseCase) {
 
 	if err := kcm.RegisterConsumer(brokers, "reg-user", "auth", kafka.UserRegisterHandler(authService)); err != nil {
 		if err == kafka.ErrConsumerAlreadyExists {

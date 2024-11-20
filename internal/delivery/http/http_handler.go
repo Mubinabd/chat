@@ -1,22 +1,28 @@
 package http
 
 import (
-	s "github.com/Mubinabd/chat/internal/service"
 	kafka "github.com/Mubinabd/chat/internal/pkg/kafka/producer"
+	s "github.com/Mubinabd/chat/internal/usecase"
 	"github.com/go-redis/redis/v8"
 )
 
 type Handlers struct {
-	Auth     *s.AuthService
-	User     *s.UserService
+	Auth     *s.AuthUseCase
+	User     *s.UserUseCase
+	Group    *s.GroupUseCase
+	Message  *s.MessageUseCase
+	File     *s.FileUseCase
 	RDB      *redis.Client
 	Producer kafka.KafkaProducer
 }
 
-func NewHandler(auth *s.AuthService, user *s.UserService, rdb *redis.Client, pr *kafka.KafkaProducer) *Handlers {
+func NewHandler(auth *s.AuthUseCase, user *s.UserUseCase, message *s.MessageUseCase, file *s.FileUseCase, group *s.GroupUseCase, rdb *redis.Client, pr *kafka.KafkaProducer) *Handlers {
 	return &Handlers{
 		Auth:     auth,
 		User:     user,
+		Group:    group,
+		File:     file,
+		Message:  message,
 		RDB:      rdb,
 		Producer: *pr,
 	}

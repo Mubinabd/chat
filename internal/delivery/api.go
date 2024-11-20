@@ -7,7 +7,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
-	// _ "github.com/Mubinabd/chat/api/docs"
+	_ "github.com/Mubinabd/chat/internal/delivery/docs"
 	"github.com/Mubinabd/chat/internal/delivery/http"
 )
 
@@ -30,12 +30,13 @@ func NewGin(h *http.Handlers) *gin.Engine {
 		AllowCredentials: true,
 	}))
 
-	
 	router.POST("/register", h.RegisterUser).Use(m.Middleware())
 	router.POST("/login", h.LoginUser).Use(m.Middleware())
 	router.POST("/forgot-password", h.ForgotPassword)
 	router.POST("/reset-password", h.ResetPassword)
-	router.GET("/developers", h.GetAllUsers).Use(m.JWTMiddleware())
+	router.GET("/users", h.GetAllUsers).Use(m.JWTMiddleware())
+
+	router.POST("/v1/upload", h.SaveFile)
 
 	user := router.Group("/v1/user").Use(m.JWTMiddleware())
 	{
@@ -45,6 +46,17 @@ func NewGin(h *http.Handlers) *gin.Engine {
 		user.GET("/setting", h.GetSetting)
 		user.PUT("/setting", h.EditSetting)
 		user.DELETE("/", h.DeleteUser)
+	}
+
+	group := router.Group("/v1/groups").Use(m.JWTMiddleware())
+	{
+		group.POST("/", h.CreateGroup)
+		group.GET("/", h.GetAllGroups)
+		group.GET("/:id", h.GetGroupByID)
+		group.PUT("/:id", h.UpdateGroup)
+		group.DELETE("/:id", h.DeleteGroup)
+		group.POST("/:groupID/add-member", h.AddMemberToGroup)
+		group.DELETE("/messages", h.AddMessageToGroup)
 	}
 
 	return router

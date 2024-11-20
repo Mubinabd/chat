@@ -1,11 +1,28 @@
 basePath: /
 definitions:
+  entity.AddFileToGroupReq:
+    properties:
+      file_id:
+        type: string
+      group_id:
+        type: string
+    type: object
   entity.ChangePasswordReqBody:
     properties:
       current_password:
         type: string
       new_password:
         type: string
+    type: object
+  entity.CreateGroupReq:
+    properties:
+      name:
+        type: string
+      user_id:
+        type: string
+    required:
+    - name
+    - user_id
     type: object
   entity.EditProfileReqBody:
     properties:
@@ -23,6 +40,32 @@ definitions:
       email:
         type: string
     type: object
+  entity.Group:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      messages:
+        items:
+          $ref: '#/definitions/entity.Message'
+        type: array
+      name:
+        type: string
+      users:
+        items:
+          type: string
+        type: array
+    type: object
+  entity.ListGroupsRes:
+    properties:
+      count:
+        type: integer
+      groups:
+        items:
+          $ref: '#/definitions/entity.Group'
+        type: array
+    type: object
   entity.ListUserRes:
     properties:
       count:
@@ -37,6 +80,22 @@ definitions:
       password:
         type: string
       username:
+        type: string
+    type: object
+  entity.Message:
+    properties:
+      content:
+        type: string
+      sender_id:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  entity.MessageReq:
+    properties:
+      group_id:
+        type: string
+      message:
         type: string
     type: object
   entity.RegisterReq:
@@ -70,6 +129,15 @@ definitions:
       theme:
         type: string
     type: object
+  entity.UpdateGroupReq:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    required:
+    - id
+    type: object
   entity.UserRes:
     properties:
       date_of_birth:
@@ -84,6 +152,8 @@ definitions:
         type: string
       username:
         type: string
+    type: object
+  entity.Void:
     type: object
 info:
   contact: {}
@@ -257,6 +327,231 @@ paths:
       summary: Get all users
       tags:
       - auth
+  /v1/groups:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all groups with pagination
+      parameters:
+      - description: Limit of groups to retrieve
+        in: query
+        name: limit
+        type: integer
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of groups retrieved successfully
+          schema:
+            $ref: '#/definitions/entity.ListGroupsRes'
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get all groups
+      tags:
+      - group
+    post:
+      consumes:
+      - application/json
+      description: Create a new group with the provided name and members
+      parameters:
+      - description: Group information
+        in: body
+        name: group
+        required: true
+        schema:
+          $ref: '#/definitions/entity.CreateGroupReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Group created successfully
+          schema:
+            $ref: '#/definitions/entity.Void'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Create a new group
+      tags:
+      - group
+  /v1/groups/{groupID}/add-member:
+    post:
+      consumes:
+      - application/json
+      description: Add a new member to the specified group
+      parameters:
+      - description: Add member to group request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.AddFileToGroupReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Member added successfully
+          schema:
+            $ref: '#/definitions/entity.Void'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "404":
+          description: Group not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Add a member to a group
+      tags:
+      - group
+  /v1/groups/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Mark a group as deleted by setting its deleted_at timestamp
+      parameters:
+      - description: Group ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Group deleted successfully
+          schema:
+            $ref: '#/definitions/entity.Void'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Delete a group
+      tags:
+      - group
+    get:
+      consumes:
+      - application/json
+      description: Retrieve group details by ID
+      parameters:
+      - description: Group ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Group details retrieved successfully
+          schema:
+            $ref: '#/definitions/entity.Group'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "404":
+          description: Group not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get group by ID
+      tags:
+      - group
+    put:
+      consumes:
+      - application/json
+      description: Update the group details such as name
+      parameters:
+      - description: Group information to update
+        in: body
+        name: group
+        required: true
+        schema:
+          $ref: '#/definitions/entity.UpdateGroupReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Group updated successfully
+          schema:
+            $ref: '#/definitions/entity.Void'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Update a group
+      tags:
+      - group
+  /v1/groups/messages:
+    post:
+      consumes:
+      - application/json
+      description: Adds a new message to the specified group
+      parameters:
+      - description: Message information
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/entity.MessageReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Message added successfully
+          schema:
+            $ref: '#/definitions/entity.Void'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Add a message to a group
+      tags:
+      - group
   /v1/user:
     delete:
       consumes:

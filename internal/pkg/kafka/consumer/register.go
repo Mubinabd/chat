@@ -4,12 +4,12 @@ import (
 	"context"
 	"encoding/json"
 
-	s "github.com/Mubinabd/chat/internal/service"
+	s "github.com/Mubinabd/chat/internal/usecase"
 	pb "github.com/Mubinabd/chat/internal/entity"
 	"golang.org/x/exp/slog"
 )
 
-func UserRegisterHandler(u *s.AuthService) func(message []byte) {
+func UserRegisterHandler(u *s.AuthUseCase) func(message []byte) {
 	return func(message []byte) {
 		var user pb.RegisterReq
 		if err := json.Unmarshal(message, &user); err != nil {

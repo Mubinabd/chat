@@ -4,12 +4,12 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/Mubinabd/chat/internal/service"
+	"github.com/Mubinabd/chat/internal/usecase"
 	pb "github.com/Mubinabd/chat/internal/entity"
 	"golang.org/x/exp/slog"
 )
 
-func UserEditProfileHandler(u *service.UserService) func(message []byte) {
+func UserEditProfileHandler(u *usecase.UserUseCase) func(message []byte) {
 	return func(message []byte) {
 		var user pb.UserRes
 		if err := json.Unmarshal(message, &user); err != nil {
@@ -26,7 +26,7 @@ func UserEditProfileHandler(u *service.UserService) func(message []byte) {
 	}
 }
 
-func UserEditPasswordHandler(u *service.UserService) func(message []byte) {
+func UserEditPasswordHandler(u *usecase.UserUseCase) func(message []byte) {
 	return func(message []byte) {
 		var user pb.ChangePasswordReq
 		if err := json.Unmarshal(message, &user); err != nil {
@@ -43,7 +43,7 @@ func UserEditPasswordHandler(u *service.UserService) func(message []byte) {
 	}
 }
 
-func UserEditSettingHandler(u *service.UserService) func(message []byte) {
+func UserEditSettingHandler(u *usecase.UserUseCase) func(message []byte) {
 	return func(message []byte) {
 		var user pb.SettingReq
 		if err := json.Unmarshal(message, &user); err != nil {

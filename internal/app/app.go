@@ -5,23 +5,22 @@ import (
 
 	a "github.com/Mubinabd/chat/internal/delivery"
 	handler "github.com/Mubinabd/chat/internal/delivery/http"
-	db "github.com/Mubinabd/chat/internal/infrastructure"
 	"github.com/Mubinabd/chat/internal/pkg/config"
 	kafka "github.com/Mubinabd/chat/internal/pkg/kafka/consumer"
 	prd "github.com/Mubinabd/chat/internal/pkg/kafka/producer"
-	s "github.com/Mubinabd/chat/internal/service"
+	s "github.com/Mubinabd/chat/internal/usecase"
 	"github.com/go-redis/redis/v8"
+	db "github.com/Mubinabd/chat/internal/storage/repository"
 	"golang.org/x/exp/slog"
 )
 
 func Run(cfg *config.Config) {
-	// Postgres Connection
 	db, err := db.New(cfg)
 	if err != nil {
 		slog.Error("can't connect to db: %v", err)
 		return
 	}
-	defer db.Db.Close()
+	defer db.DB.Close()
 	slog.Info("Connected to Postgres")
 
 	rdb := redis.NewClient(&redis.Options{
@@ -35,8 +34,11 @@ func Run(cfg *config.Config) {
 	}
 	slog.Info("Connected to Redis")
 
-	authService := s.NewAuthService(db)
-	userService := s.NewUserService(db)
+	authUseCase := s.NewAuthUseCase(db)
+	userUseCase := s.NewUserUseCase(db)
+	messageUseCase := s.NewMessageUseCase(db)
+	groupUseCase := s.NewGroupUseCase(db)
+	fileUseCase := s.NewFileUseCase(db)
 
 	// Kafka
 	brokers := []string{"kafka_auth:9092"}
@@ -47,10 +49,10 @@ func Run(cfg *config.Config) {
 		return
 	}
 
-	Reader(brokers, cm, authService, userService)
+	Reader(brokers, cm, authUseCase, userUseCase)
 
 	// HTTP Server
-	h := handler.NewHandler(authService, userService, rdb, &pr)
+	h := handler.NewHandler(authUseCase, userUseCase, messageUseCase, fileUseCase, groupUseCase, rdb, &pr)
 
 	router := a.NewGin(h)
 	router.SetTrustedProxies(nil)
