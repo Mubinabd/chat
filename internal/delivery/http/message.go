@@ -43,40 +43,34 @@ func (h *Handlers) AddMessageToGroup(c *gin.Context) {
 // @Security BearerAuth
 // @Param file formData file true "File to be uploaded"
 // @Success 200 {object} entity.FileResponse
-// @Failure 400 {object} gin.H "Bad request"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Failure 400 {object} string "Bad request"
+// @Failure 500 {object} string "Internal server error"
 // @Router /v1/files/upload [post]
 func (h *Handlers) SaveFile(c *gin.Context) {
-	// Retrieve the file from the request
 	file, err := c.FormFile("file")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to retrieve file"})
 		return
 	}
 
-	// Specify the file paths
 	srcFilePath := file.Filename
 	destFilePath := "./uploads/" + file.Filename
 
-	// Save the uploaded file locally
 	if err := c.SaveUploadedFile(file, srcFilePath); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save uploaded file"})
 		return
 	}
 
-	// Prepare the repository request
 	req := &entity.FileSave{
 		FileName: srcFilePath,
 		FilePath: destFilePath,
 	}
 
-	// Save the file using the repository
 	response, err := h.File.SaveFile(req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Respond with success
 	c.JSON(http.StatusOK, response)
 }

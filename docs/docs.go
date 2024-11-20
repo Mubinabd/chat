@@ -275,6 +275,55 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/files/upload": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Upload a file to the server, save it, and store metadata",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "file"
+                ],
+                "summary": "Upload and Save File",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "File to be uploaded",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.FileResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/groups": {
             "get": {
                 "security": [
@@ -952,6 +1001,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.FileResponse": {
+            "type": "object",
+            "properties": {
+                "file_path": {
+                    "type": "string"
+                },
+                "message": {
                     "type": "string"
                 }
             }

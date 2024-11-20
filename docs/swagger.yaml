@@ -35,6 +35,13 @@ definitions:
       username:
         type: string
     type: object
+  entity.FileResponse:
+    properties:
+      file_path:
+        type: string
+      message:
+        type: string
+    type: object
   entity.GetByEmail:
     properties:
       email:
@@ -327,6 +334,37 @@ paths:
       summary: Get all users
       tags:
       - auth
+  /v1/files/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload a file to the server, save it, and store metadata
+      parameters:
+      - description: File to be uploaded
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.FileResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Upload and Save File
+      tags:
+      - file
   /v1/groups:
     get:
       consumes:
