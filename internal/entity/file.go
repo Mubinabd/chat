@@ -10,7 +10,7 @@ type GetFileByIDReq struct {
 	ID string `json:"id"`
 }
 
-type SaveFile struct {
+type FileSave struct {
 	FileName string `json:"filename"`
 	FilePath string `json:"filepath"`
 }

@@ -31,7 +31,7 @@ type UserI interface {
 }
 
 type FileI interface {
-    SaveFile(*pb.SaveFile) (*pb.FileResponse, error)
+    SaveFile(*pb.FileSave) (*pb.FileResponse, error)
 }
 
 type GroupI interface {

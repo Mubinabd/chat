@@ -65,7 +65,7 @@ func (h *Handlers) SaveFile(c *gin.Context) {
 	}
 
 	// Prepare the repository request
-	req := &entity.SaveFile{
+	req := &entity.FileSave{
 		FileName: srcFilePath,
 		FilePath: destFilePath,
 	}
