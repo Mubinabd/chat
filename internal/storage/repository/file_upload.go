@@ -19,7 +19,7 @@ func NewFileRepo(db *sql.DB) *FileRepo {
 		db: db,
 	}
 }
-func (r *FileRepo) SaveFile(req *entity.SaveFile) (*entity.File, error) {
+func (r *FileRepo) SaveFile(req *entity.SaveFile) (*entity.FileResponse, error) {
 	destFile, err := os.Create(req.FilePath)
 	if err != nil {
 		log.Printf("Failed to create file at path %s: %v", req.FilePath, err)
@@ -42,8 +42,8 @@ func (r *FileRepo) SaveFile(req *entity.SaveFile) (*entity.File, error) {
 
 	log.Printf("File %s successfully saved at %s. Total bytes written: %d", req.FileName, req.FilePath, bytesWritten)
 
-	return &entity.File{
-		FileName: req.FileName,
-		URL:      req.FilePath,
+	return &entity.FileResponse{
+		Message: req.FileName,
+		FilePath:      req.FilePath,
 	}, nil
 }

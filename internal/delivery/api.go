@@ -7,7 +7,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
-	_ "github.com/Mubinabd/chat/internal/delivery/docs"
+	_ "github.com/Mubinabd/chat/docs"
 	"github.com/Mubinabd/chat/internal/delivery/http"
 )
 
@@ -36,8 +36,7 @@ func NewGin(h *http.Handlers) *gin.Engine {
 	router.POST("/reset-password", h.ResetPassword)
 	router.GET("/users", h.GetAllUsers).Use(m.JWTMiddleware())
 
-	router.POST("/v1/upload", h.SaveFile)
-
+	
 	user := router.Group("/v1/user").Use(m.JWTMiddleware())
 	{
 		user.GET("/profiles", h.GetProfile)
@@ -47,9 +46,10 @@ func NewGin(h *http.Handlers) *gin.Engine {
 		user.PUT("/setting", h.EditSetting)
 		user.DELETE("/", h.DeleteUser)
 	}
-
+	
 	group := router.Group("/v1/groups").Use(m.JWTMiddleware())
 	{
+		router.POST("/upload", h.SaveFile)
 		group.POST("/", h.CreateGroup)
 		group.GET("/", h.GetAllGroups)
 		group.GET("/:id", h.GetGroupByID)

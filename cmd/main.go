@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/Mubinabd/chat/internal/app"
-	_ "github.com/Mubinabd/chat/internal/delivery/docs"
 	"github.com/Mubinabd/chat/internal/pkg/config"
 	_ "github.com/lib/pq"
 )

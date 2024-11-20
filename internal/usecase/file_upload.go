@@ -13,6 +13,6 @@ func NewFileUseCase(fileRepo *repository.Storage) *FileUseCase {
     return &FileUseCase{storage: *fileRepo}
 }
 
-func (uc *FileUseCase) SaveFile(req *entity.SaveFile) (*entity.File, error) {
+func (uc *FileUseCase) SaveFile(req *entity.SaveFile) (*entity.FileResponse, error) {
     return uc.storage.File().SaveFile(req)
 }
