@@ -1,4 +1,4 @@
-package postgresql
+package infrastructure
 
 import (
 	"database/sql"
@@ -12,8 +12,8 @@ import (
 
 type Storage struct {
 	Db       *sql.DB
-	AuthS    repository.AuthI
-	UserS    repository.UserI
+	AuthS    usecase.AuthI
+	UserS    usecase.UserI
 }
 
 func New(cfg *config.Config) (*Storage, error) {
@@ -42,14 +42,14 @@ func New(cfg *config.Config) (*Storage, error) {
 	}, nil
 }
 
-func (s *Storage) Auth() repository.AuthI {
+func (s *Storage) Auth() usecase.AuthI {
 	if s.AuthS == nil {
 		s.AuthS = repo.NewAuthRepo(s.Db)
 	}
 	return s.AuthS
 }
 
-func (s *Storage) User() repository.UserI {
+func (s *Storage) User() usecase.UserI {
 	if s.UserS == nil {
 		s.UserS = repo.NewUserRepo(s.Db)
 	}

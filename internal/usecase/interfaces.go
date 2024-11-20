@@ -1,4 +1,4 @@
-package repository
+package usecase
 
 import (
 	pb "github.com/Mubinabd/chat/internal/entity"
